@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI @ Berlitz Japan — Site Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#004FEF;
+    --blue-press:#0039b8;
+    --charcoal:#1D1D1D;
+    --powder:#FCFCFC;
+    --white:#FFFFFF;
+    --green:#3DDC97;
+    --green-10:#EBFBF4;
+    --green-ink:#0c6b48;
+    --purple:#643BA2;
+    --purple-10:#F1ECF8;
+    --blue-10:#E5EDFD;
+    --blue-30:#B2CAFA;
+    --blue-70:#4C83F3;
+    --ink-70:rgba(29,29,29,.72);
+    --ink-50:rgba(29,29,29,.52);
+    --line:rgba(29,29,29,.10);
+    --radius:16px;
+    --radius-sm:10px;
+    --maxw:1140px;
+    --shadow:0 1px 2px rgba(16,24,64,.04), 0 10px 30px rgba(16,24,64,.06);
+    --shadow-lift:0 6px 14px rgba(16,24,64,.08), 0 20px 48px rgba(16,24,64,.12);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:"IBM Plex Sans",Arial,sans-serif;
+    font-weight:400;
+    color:var(--charcoal);
+    background:var(--powder);
+    font-size:17px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .mono{font-family:"IBM Plex Mono",Consolas,monospace}
+  .eyebrow{
+    font-family:"IBM Plex Mono",Consolas,monospace;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    font-weight:500;color:var(--blue);margin:0 0 12px;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  h1,h2,h3{font-weight:600;line-height:1.18;letter-spacing:-.01em;margin:0}
+  p{margin:0 0 16px}
+  :focus-visible{outline:3px solid var(--blue-70);outline-offset:2px;border-radius:6px}
+
+  /* ---------- Header / Nav ---------- */
+  .site-header{
+    position:sticky;top:0;z-index:50;
+    background:var(--blue);color:#fff;
+    box-shadow:0 1px 0 rgba(255,255,255,.12), 0 8px 24px rgba(0,32,120,.18);
+  }
+  .header-inner{display:flex;align-items:center;gap:16px;min-height:64px;max-width:var(--maxw);margin:0 auto;padding:8px 28px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;flex:none}
+  .bmark{
+    width:36px;height:36px;border-radius:9px;background:#fff;color:var(--blue);
+    display:grid;place-items:center;font-weight:700;font-size:20px;flex:none;
+    font-family:"IBM Plex Sans";
+  }
+  .brand-txt{display:flex;flex-direction:column;line-height:1.05}
+  .brand-txt b{font-weight:600;font-size:16px;letter-spacing:-.01em}
+  .brand-txt span{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.78)}
+  .topnav{display:flex;gap:2px;margin-left:8px;flex-wrap:wrap}
+  .navbtn{
+    appearance:none;border:0;background:transparent;color:rgba(255,255,255,.82);
+    font-family:inherit;font-size:14.5px;font-weight:500;cursor:pointer;
+    padding:9px 13px;border-radius:9px;line-height:1;white-space:nowrap;
+    transition:background .15s,color .15s;
+  }
+  .navbtn:hover{background:rgba(255,255,255,.14);color:#fff}
+  .navbtn.is-active{background:#fff;color:var(--blue)}
+  .nav-spacer{flex:1}
+  .header-cta{
+    flex:none;background:var(--green);color:var(--charcoal);
+    font-weight:600;font-size:13.5px;border-radius:999px;padding:9px 16px;
+    display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  }
+  .header-cta:hover{text-decoration:none;filter:brightness(.97)}
+  .menu-toggle{display:none}
+
+  /* ---------- View system ---------- */
+  .view{display:none}
+  .view.is-active{display:block;animation:fade .4s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(120% 140% at 88% -10%, rgba(76,131,243,.55), transparent 55%),
+      linear-gradient(135deg,var(--blue) 0%, #0a3fc4 70%, #082f9b 100%);
+    color:#fff;overflow:hidden;
+  }
+  .hero-inner{max-width:var(--maxw);margin:0 auto;padding:64px 28px 60px;
+    display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+  .hero .eyebrow{color:rgba(255,255,255,.85)}
+  .hero h1{font-size:clamp(34px,4.6vw,54px);font-weight:600;margin:0 0 18px}
+  .hero .lede{font-size:19px;font-weight:300;color:rgba(255,255,255,.92);max-width:34ch;margin:0 0 28px}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15.5px;
+    padding:13px 22px;border-radius:999px;border:1.5px solid transparent;cursor:pointer;
+    font-family:inherit;transition:transform .12s,filter .15s,background .15s,color .15s;
+  }
+  .btn:hover{text-decoration:none;transform:translateY(-1px)}
+  .btn-primary{background:#fff;color:var(--blue)}
+  .btn-primary:hover{filter:brightness(.96)}
+  .btn-ghost{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.6)}
+  .btn-ghost:hover{background:rgba(255,255,255,.16)}
+
+  /* shield trust card — signature element */
+  .shield-card{
+    background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);
+    border-radius:20px;padding:26px;backdrop-filter:blur(2px);
+  }
+  .shield-badge{
+    display:inline-flex;align-items:center;gap:9px;background:var(--green);color:var(--charcoal);
+    font-weight:600;font-size:13px;padding:7px 13px;border-radius:999px;margin-bottom:16px;
+  }
+  .shield-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green-ink);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .shield-card h3{font-size:18px;color:#fff;margin:0 0 8px;display:flex;align-items:center;gap:10px}
+  .shield-card p{color:rgba(255,255,255,.86);font-size:14.5px;font-weight:300;margin:0}
+  .shield-illus{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .shield-illus svg{width:54px;height:54px;flex:none}
+
+  /* ---------- generic section ---------- */
+  .section{padding:64px 0}
+  .section-head{margin-bottom:28px;max-width:62ch}
+  .section-head h2{font-size:clamp(24px,3vw,32px)}
+  .section-head p{color:var(--ink-70);font-size:17px;margin-top:10px}
+  .alt{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+  /* quick links */
+  .ql-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .ql{
+    display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);
+    border-radius:var(--radius);padding:18px;min-height:118px;box-shadow:var(--shadow);
+    transition:transform .14s,box-shadow .14s,border-color .14s;color:var(--charcoal);
+  }
+  .ql:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift);border-color:var(--blue-30);text-decoration:none}
+  .ql .ic{width:40px;height:40px;border-radius:11px;background:var(--blue-10);color:var(--blue);display:grid;place-items:center;flex:none}
+  .ql .ic svg{width:21px;height:21px}
+  .ql b{font-weight:600;font-size:15.5px;letter-spacing:-.01em}
+  .ql small{color:var(--ink-50);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.02em}
+  .ql.ql-launch .ic{background:var(--green-10);color:var(--green-ink)}
+
+  /* news */
+  .news-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+  .news-col{display:grid;gap:18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .news-feature{display:flex;flex-direction:column}
+  .news-feature .banner{
+    background:linear-gradient(135deg,var(--blue),#0a3fc4);color:#fff;padding:30px 28px;position:relative;
+  }
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;
+    padding:5px 11px;border-radius:999px;margin-bottom:14px;font-family:"IBM Plex Mono",monospace;letter-spacing:.04em}
+  .pill-live{background:var(--green);color:var(--charcoal)}
+  .pill-pinned{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3)}
+  .news-feature h3{font-size:24px;color:#fff;margin:0;max-width:22ch}
+  .news-feature .body{padding:24px 28px 26px}
+  .news-feature .body p{color:var(--ink-70);margin:0 0 18px}
+  .news-mini{padding:22px 22px 20px}
+  .news-mini .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+  .news-mini.is-new .tag{color:var(--green-ink)}
+  .news-mini.is-soon .tag{color:var(--purple)}
+  .news-mini h4{font-size:18px;font-weight:600;margin:8px 0 8px}
+  .news-mini p{color:var(--ink-70);font-size:14.5px;margin:0 0 14px}
+  .textlink{font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:6px}
+  .textlink svg{width:15px;height:15px}
+
+  /* spotlight */
+  .spot-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}
+  .spot{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+  .spot .eyebrow{color:var(--purple)}
+  .spot h3{font-size:20px;margin:0 0 14px}
+  .promptbox{
+    background:#0e1430;color:#dfe6ff;border-radius:12px;padding:18px 18px;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:0 0 16px;
+    border:1px solid #1d2750;
+  }
+  .promptbox .g{color:#9ec1ff}
+  .gcse-why{font-size:14.5px;color:var(--ink-70);margin:0}
+  .gcse-why b{color:var(--charcoal)}
+  .focal{display:flex;gap:16px;align-items:flex-start;background:var(--blue-10);border-radius:12px;padding:18px;margin-top:4px}
+  .avatar{width:56px;height:56px;border-radius:50%;background:var(--blue-30);color:var(--blue);display:grid;place-items:center;flex:none;font-weight:600}
+  .focal .meta b{font-size:16px}
+  .focal .meta .role{font-size:13px;color:var(--ink-70);margin:2px 0 8px}
+  .ask{font-size:13px}
+  .ask span{display:inline-block;background:#fff;border:1px solid var(--blue-30);color:var(--blue);
+    border-radius:999px;padding:4px 10px;margin:3px 4px 0 0;font-weight:500}
+  .tmpl-note{font-size:12px;color:var(--ink-50);margin-top:12px;font-style:italic}
+
+  /* ---------- GET STARTED ---------- */
+  .gs-top{background:linear-gradient(135deg,var(--blue),#0a3fc4);color:#fff}
+  .gs-top-inner{max-width:var(--maxw);margin:0 auto;padding:54px 28px 46px}
+  .gs-top .eyebrow{color:rgba(255,255,255,.85)}
+  .gs-top h1{font-size:clamp(30px,4vw,44px);margin:0 0 12px}
+  .gs-top p{color:rgba(255,255,255,.9);font-weight:300;font-size:18px;max-width:54ch;margin:0}
+  .gs-layout{max-width:var(--maxw);margin:0 auto;padding:0 28px;display:grid;grid-template-columns:240px 1fr;gap:40px;align-items:start}
+  .gs-rail{position:sticky;top:84px;padding:32px 0;display:flex;flex-direction:column;gap:4px}
+  .gs-rail .rail-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-50);margin:0 0 8px;padding:0 14px}
+  .rail-link{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;color:var(--ink-70);font-weight:500;font-size:15px;cursor:pointer;transition:background .14s,color .14s}
+  .rail-link:hover{background:var(--blue-10);color:var(--blue);text-decoration:none}
+  .rail-link.is-active{background:var(--blue-10);color:var(--blue);font-weight:600}
+  .rail-link .num{font-family:"IBM Plex Mono",monospace;font-size:12px;width:20px;color:var(--blue)}
+  .gs-main{padding:44px 0 70px}
+  .gs-block{padding:18px 0 46px;border-bottom:1px solid var(--line);scroll-margin-top:84px}
+  .gs-block:last-child{border-bottom:0}
+  .gs-block .step-eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:500;margin-bottom:10px}
+  .gs-block h2{font-size:27px;margin:0 0 14px}
+  .gs-block > p{color:var(--ink-70);max-width:64ch}
+
+  .cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 0 8px}
+  .cap{display:flex;gap:13px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px}
+  .cap .ic{width:38px;height:38px;border-radius:10px;background:var(--blue-10);color:var(--blue);display:grid;place-items:center;flex:none}
+  .cap .ic svg{width:20px;height:20px}
+  .cap b{font-weight:600;font-size:15.5px}
+  .cap p{font-size:14px;color:var(--ink-70);margin:3px 0 0}
+
+  .safe-panel{display:flex;gap:16px;background:var(--green-10);border:1px solid #c4f0dd;border-radius:var(--radius);padding:20px 22px;margin-top:22px}
+  .safe-panel svg{width:34px;height:34px;flex:none;color:var(--green-ink)}
+  .safe-panel b{color:var(--charcoal)}
+  .safe-panel p{margin:6px 0 0;font-size:14.5px;color:#2b5a45}
+  .rulechip{display:inline-block;background:#fff;border:1px solid #b9ead4;border-radius:8px;padding:3px 9px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--green-ink);font-weight:500}
+
+  .method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:8px 0 4px}
+  .method{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+  .method h3{font-size:17px;display:flex;align-items:center;gap:10px;margin:0 0 14px}
+  .method ol{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  .method li{counter-increment:s;position:relative;padding:0 0 13px 34px;font-size:15px;color:var(--ink-70)}
+  .method li::before{content:counter(s);position:absolute;left:0;top:-1px;width:23px;height:23px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:600;display:grid;place-items:center;font-family:"IBM Plex Mono",monospace}
+  .method li:last-child{padding-bottom:0}
+  .urlchip{font-family:"IBM Plex Mono",monospace;font-size:13px;background:var(--blue-10);color:var(--blue);padding:2px 7px;border-radius:6px}
+
+  .gcse-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 22px}
+  .chip{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+  .chip .L{font-weight:700;font-size:22px;color:var(--blue);font-family:"IBM Plex Sans"}
+  .chip b{display:block;font-size:14.5px;margin:6px 0 3px}
+  .chip span{font-size:13px;color:var(--ink-70)}
+
+  .starters{display:grid;gap:12px;margin:6px 0 8px}
+  .starter{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .starter .h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 16px;background:var(--blue-10)}
+  .starter .h b{font-size:14px;color:var(--blue)}
+  .starter .h .copy{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-50)}
+  .starter .p{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--charcoal);padding:15px 16px;line-height:1.6}
+
+  .habits{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+  .habit{background:var(--blue-10);border-radius:12px;padding:16px 18px}
+  .habit b{font-size:15px}
+  .habit p{font-size:14px;color:var(--ink-70);margin:6px 0 0}
+
+  /* 5-min path */
+  .path{position:relative;margin-top:6px}
+  .path::before{content:"";position:absolute;left:18px;top:6px;bottom:30px;width:2px;background:var(--blue-30)}
+  .pstep{position:relative;padding:0 0 22px 56px;min-height:40px}
+  .pstep .n{position:absolute;left:0;top:0;width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:15px;box-shadow:0 0 0 5px var(--powder)}
+  .pstep.final .n{background:var(--green);color:var(--charcoal)}
+  .pstep h4{font-size:17px;font-weight:600;margin:5px 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .pstep .time{font-family:"IBM Plex Mono",monospace;font-size:11px;background:#fff;border:1px solid var(--line);color:var(--ink-50);padding:2px 8px;border-radius:999px;font-weight:500}
+  .pstep p{font-size:15px;color:var(--ink-70);margin:0 0 10px}
+  .pstep .mini-prompt{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:#0e1430;color:#dfe6ff;border-radius:9px;padding:12px 14px;line-height:1.55}
+  .pstep ul{margin:6px 0 0;padding-left:18px;color:var(--ink-70);font-size:14.5px}
+  .pstep ul li{margin-bottom:5px}
+
+  /* placeholder view */
+  .ph{max-width:760px;margin:0 auto;padding:90px 28px 100px;text-align:center}
+  .ph .badge{display:inline-flex;align-items:center;gap:8px;background:var(--blue-10);color:var(--blue);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;padding:7px 14px;border-radius:999px;margin-bottom:22px}
+  .ph h1{font-size:clamp(28px,4vw,40px);margin:0 0 14px}
+  .ph > p{color:var(--ink-70);font-size:18px;max-width:50ch;margin:0 auto 34px}
+  .ph-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;text-align:left;max-width:620px;margin:0 auto}
+  .ph-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 18px;display:flex;align-items:center;gap:12px;font-weight:500}
+  .ph-item .d{width:8px;height:8px;border-radius:50%;background:var(--blue-30);flex:none}
+  .ph-foot{margin-top:34px;font-size:14px;color:var(--ink-50)}
+
+  /* footer */
+  .site-footer{background:var(--charcoal);color:rgba(255,255,255,.72);padding:34px 0;font-size:14px}
+  .footer-inner{max-width:var(--maxw);margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  .footer-inner .fb{display:flex;align-items:center;gap:11px;color:#fff;font-weight:600}
+  .footer-inner .fb .bmark{width:30px;height:30px;font-size:17px}
+  .demo-flag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;background:rgba(255,255,255,.1);padding:6px 11px;border-radius:999px}
+
+  /* responsive */
+  @media(max-width:920px){
+    .hero-inner{grid-template-columns:1fr;gap:32px}
+    .ql-grid{grid-template-columns:repeat(2,1fr)}
+    .news-grid,.spot-grid{grid-template-columns:1fr}
+    .cap-grid,.method-grid,.gcse-chips,.habits,.ph-list{grid-template-columns:1fr}
+    .gs-layout{grid-template-columns:1fr;gap:0}
+    .gs-rail{position:static;flex-direction:row;flex-wrap:wrap;padding:18px 0;gap:6px}
+    .gs-rail .rail-label{display:none}
+    .gcse-chips{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:760px){
+    .header-inner{height:auto;flex-wrap:wrap;padding:12px 20px;gap:12px}
+    .menu-toggle{display:inline-grid;place-items:center;margin-left:auto;width:40px;height:40px;border-radius:9px;background:rgba(255,255,255,.14);border:0;color:#fff;cursor:pointer}
+    .nav-spacer,.header-cta{display:none}
+    .topnav{display:none;flex-direction:column;width:100%;gap:4px}
+    .topnav.is-open{display:flex}
+    .navbtn{width:100%;text-align:left;padding:12px 14px}
+    .wrap{padding:0 20px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="bmark">B</div>
+      <div class="brand-txt">
+        <b>AI&nbsp;@&nbsp;Berlitz Japan</b>
+        <span>BIS · AI Governance &amp; Strategy</span>
+      </div>
+    </div>
+    <nav class="topnav" id="topnav" aria-label="Primary">
+      <button class="navbtn is-active" data-view="home">Home</button>
+      <button class="navbtn" data-view="get-started">Get Started</button>
+      <button class="navbtn" data-view="ph-tools">Tools &amp; Access</button>
+      <button class="navbtn" data-view="ph-learn">Learn &amp; Practice</button>
+      <button class="navbtn" data-view="ph-prompts">Prompt Library</button>
+      <button class="navbtn" data-view="ph-gov">Governance &amp; Safety</button>
+      <button class="navbtn" data-view="ph-support">Support &amp; FAQ</button>
+    </nav>
+    <div class="nav-spacer"></div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HOME VIEW ============ -->
+<section class="view is-active" id="view-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="eyebrow">Start here</p>
+        <h1>AI at Berlitz Japan, made simple.</h1>
+        <p class="lede">Your home for using Copilot Chat and other approved AI tools safely and well — built by BIS to help you work faster, not to slow you down.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" data-goto="gs-path">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+            Get started in 5 minutes
+          </button>
+          <a class="btn btn-ghost" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Open Copilot Chat ↗</a>
+        </div>
+      </div>
+      <aside class="shield-card" aria-label="Data protection">
+        <div class="shield-badge"><span class="dot"></span> Protected by default</div>
+        <div class="shield-illus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3DDC97" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5 5-5"/></svg>
+          <div>
+            <h3>The green shield</h3>
+          </div>
+        </div>
+        <p>When the green shield is showing in Copilot Chat, your prompts stay inside Berlitz and are never used to train AI models. If it's safe in Outlook or Teams, it's safe here.</p>
+      </aside>
+    </div>
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Quick links</p>
+        <h2>Jump straight to what you need</h2>
+      </div>
+      <div class="ql-grid">
+        <a class="ql ql-launch" data-goto-view="get-started">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg></span>
+          <b>Get Started</b><small>5-minute path</small>
+        </a>
+        <a class="ql" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h8M8 14h5"/><path d="M21 12a8 8 0 1 1-3.5-6.6L21 4v5h-5"/></svg></span>
+          <b>Open Copilot Chat</b><small>m365.cloud.microsoft/chat</small>
+        </a>
+        <a class="ql" data-goto-view="ph-tools">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h6l2-3 3 6 2-3h2"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <b>Which tool should I use?</b><small>Decision guide</small>
+        </a>
+        <a class="ql" data-goto-view="ph-prompts">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h16M4 19h10"/></svg></span>
+          <b>Prompt Library</b><small>Ready-made prompts</small>
+        </a>
+        <a class="ql" data-goto-view="ph-gov">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+          <b>Data safety &amp; APPI</b><small>The essentials</small>
+        </a>
+        <a class="ql" data-goto-view="ph-tools">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          <b>Register a tool</b><small>Request access</small>
+        </a>
+        <a class="ql" data-goto-view="ph-support">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.1 9a3 3 0 1 1 4.5 2.6c-.9.5-1.6 1.2-1.6 2.4"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg></span>
+          <b>Get help</b><small>BIS &amp; Focal Points</small>
+        </a>
+        <a class="ql" data-goto-view="ph-learn">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h7v16H6a2 2 0 0 0-2 2V5z"/><path d="M20 3v18"/></svg></span>
+          <b>Learn &amp; Practice</b><small>Guides by role</small>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="section alt">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Announcements</p>
+        <h2>What's new</h2>
+      </div>
+      <div class="news-grid">
+        <article class="card news-feature">
+          <div class="banner">
+            <span class="pill pill-pinned">📌 Pinned</span>
+            <h3>Copilot Chat is live for everyone at Berlitz Japan</h3>
+          </div>
+          <div class="body">
+            <p>Copilot Chat is now available to all staff at no extra cost — it's included in your Microsoft 365 license. It runs inside the same protected Berlitz environment as Outlook, Teams, and Excel, so it's safe for everyday work. New to it? The 5-minute starter path will get you running your first prompt today.</p>
+            <button class="btn btn-primary" data-goto="gs-path" style="font-size:14px;padding:11px 18px">Start in 5 minutes</button>
+          </div>
+        </article>
+        <div class="news-col">
+          <article class="card news-mini is-new">
+            <div class="tag">● New resource</div>
+            <h4>Role-based prompt guides</h4>
+            <p>Prompt guides tailored to Sales &amp; Marketing, Instructors, Management, Operations, and IT — the AI tasks that matter most for your role.</p>
+            <a class="textlink" data-goto-view="ph-learn">Find your role
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+          <article class="card news-mini is-soon">
+            <div class="tag">◆ Coming September</div>
+            <h4>The Prompt Engineering Challenge</h4>
+            <p>A company-wide challenge to surface the best prompts across teams. Winning prompts go straight into the shared library for everyone to reuse.</p>
+            <a class="textlink" data-goto-view="ph-learn">Watch this space
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPOTLIGHT -->
+  <div class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Spotlight · updated monthly</p>
+        <h2>This month at a glance</h2>
+      </div>
+      <div class="spot-grid">
+        <div class="spot">
+          <p class="eyebrow">Prompt of the month</p>
+          <h3>Rescheduling a lesson for a corporate client</h3>
+          <div class="promptbox">Draft an email to a corporate client informing them that the lesson originally scheduled for Tues, April 21 has been rescheduled to Thurs, April 23 at the same time of 10:45. The tone should be apologetic but professional, suitable for a Japanese business context. Include a subject line, keep it under 120 words, and offer for the client to contact us if the new time does not work. Write the email ready to send with no placeholder text.</div>
+          <p class="gcse-why">Why it works: it gives Copilot all four <b>GCSE</b> ingredients — a clear <b>Goal</b> (the email), <b>Context</b> (corporate client, Japanese business tone), <b>Source</b> (the exact dates and times), and <b>Expectations</b> (subject line, under 120 words, ready to send). Specific in, specific out.</p>
+        </div>
+        <div class="spot">
+          <p class="eyebrow">Focal Point of the month</p>
+          <h3>Your department AI advocate</h3>
+          <div class="focal">
+            <div class="avatar">＋</div>
+            <div class="meta">
+              <b>[ Focal Point name ]</b>
+              <div class="role">[ Department · Role ]</div>
+              <div class="ask">Ask me about:
+                <span>getting started</span><span>translating materials</span><span>email summaries</span>
+              </div>
+            </div>
+          </div>
+          <p class="tmpl-note">Template — pull the live roster from the Focal Points directory once nominations are confirmed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GET STARTED VIEW ============ -->
+<section class="view" id="view-get-started">
+  <div class="gs-top">
+    <div class="gs-top-inner">
+      <p class="eyebrow">Get started</p>
+      <h1>From "what is this" to your first real prompt — in one sitting.</h1>
+      <p>Four short steps. No technical knowledge needed. Work through them in order, or jump to the part you need.</p>
+    </div>
+  </div>
+
+  <div class="gs-layout">
+    <aside class="gs-rail" id="gsRail" aria-label="On this page">
+      <p class="rail-label">On this page</p>
+      <a class="rail-link is-active" data-scroll="gs-what"><span class="num">01</span> What is Copilot Chat</a>
+      <a class="rail-link" data-scroll="gs-access"><span class="num">02</span> Access &amp; sign-in</a>
+      <a class="rail-link" data-scroll="gs-first"><span class="num">03</span> Your first prompt</a>
+      <a class="rail-link" data-scroll="gs-path"><span class="num">04</span> 5-minute starter path</a>
+    </aside>
+
+    <div class="gs-main">
+
+      <!-- 2.1 -->
+      <section class="gs-block" id="gs-what">
+        <div class="step-eyebrow">01 · The basics</div>
+        <h2>What is Copilot Chat</h2>
+        <p>Copilot Chat is a conversational AI assistant — included in your Berlitz Microsoft 365 license — for quick help, drafting, summarizing, translating, and brainstorming.</p>
+        <div class="cap-grid">
+          <div class="cap"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v10H8l-4 4V6z"/></svg></span><div><b>Draft &amp; reply</b><p>Emails, messages, and documents in the tone you ask for.</p></div></div>
+          <div class="cap"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14M5 10h14M5 15h9"/></svg></span><div><b>Summarize</b><p>Long threads, documents, and spreadsheets into key points.</p></div></div>
+          <div class="cap"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7M7 5v3c0 3-1.5 5-4 6M5 8c0 3 3 5 6 5"/><path d="M13 19l4-9 4 9M14.5 16h5"/></svg></span><div><b>Translate</b><p>Between English and Japanese, including Berlitz-specific work.</p></div></div>
+          <div class="cap"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6"/></svg></span><div><b>Analyze</b><p>Paste data or upload a file and ask what it shows.</p></div></div>
+        </div>
+        <div class="safe-panel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5 5-5"/></svg>
+          <div>
+            <b>Why it's the safe default</b>
+            <p>Your prompts and data stay inside Berlitz and are never used to train AI models. The simple rule: <span class="rulechip">if it's safe in Outlook or Teams, it's safe in Copilot Chat</span> &nbsp;Start here for everyday work; if it doesn't meet a specific need, other tools can be used with the right settings.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.2 -->
+      <section class="gs-block" id="gs-access">
+        <div class="step-eyebrow">02 · Access</div>
+        <h2>Access &amp; sign-in — look for the green shield</h2>
+        <p>You can use Copilot Chat in your browser or as a Windows app. Either way, one thing confirms you're protected: the green shield.</p>
+        <div class="method-grid">
+          <div class="method">
+            <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004FEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg> In your browser</h3>
+            <ol>
+              <li>Go to <span class="urlchip">m365.cloud.microsoft/chat</span></li>
+              <li>Sign in with your <b>@berlitz.&#42;</b> work account</li>
+              <li>Confirm the <b>green shield</b> is visible in the chat</li>
+            </ol>
+          </div>
+          <div class="method">
+            <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#004FEF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/></svg> In the Windows app</h3>
+            <ol>
+              <li>Open the <b>Microsoft 365 Copilot</b> app from Start or taskbar</li>
+              <li>Not installed? Get it from the Microsoft Store</li>
+              <li>Sign in and confirm the <b>green shield</b></li>
+            </ol>
+          </div>
+        </div>
+        <div class="safe-panel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z"/><path d="M8.5 12l2.5 2.5 5-5"/></svg>
+          <div>
+            <b>What the green shield means</b>
+            <p>It confirms your session is running under Berlitz's enterprise data protection. <b>No green shield?</b> You're likely on a personal account — sign out and back in with your @berlitz.&#42; account. Still missing? Contact BIS.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2.3 -->
+      <section class="gs-block" id="gs-first">
+        <div class="step-eyebrow">03 · Your first prompt</div>
+        <h2>Your first prompt</h2>
+        <p>A prompt is simply what you ask Copilot to do. The better the instructions, the better the result. The one idea to remember is <b>be specific</b> — and the fastest way to be specific is <b>GCSE</b>:</p>
+        <div class="gcse-chips">
+          <div class="chip"><span class="L">G</span><b>Goal</b><span>What you want — an email, a summary, a translation.</span></div>
+          <div class="chip"><span class="L">C</span><b>Context</b><span>Why, and who it's for.</span></div>
+          <div class="chip"><span class="L">S</span><b>Source</b><span>The notes, text, or file to work from.</span></div>
+          <div class="chip"><span class="L">E</span><b>Expectations</b><span>Format, length, and tone.</span></div>
+        </div>
+        <p style="margin-bottom:14px"><b>Copy-paste starters</b> — try one now:</p>
+        <div class="starters">
+          <div class="starter">
+            <div class="h"><b>Summarize an email thread</b><span class="copy">paste the thread first</span></div>
+            <div class="p">Summarize this email thread in 3–5 bullet points. Highlight any action items, deadlines, and who is responsible for each.</div>
+          </div>
+          <div class="starter">
+            <div class="h"><b>Translate for work</b><span class="copy">paste your text first</span></div>
+            <div class="p">Translate the text below into natural, professional Japanese suitable for a corporate client. Keep it polite and concise.</div>
+          </div>
+          <div class="starter">
+            <div class="h"><b>Get an Excel formula</b><span class="copy">no file needed</span></div>
+            <div class="p">Write an Excel formula that calculates the percentage change between column B and column C for each row. Show the formula and explain what each part does.</div>
+          </div>
+        </div>
+        <div class="habits">
+          <div class="habit"><b>Be specific, not polite.</b><p>"Please kindly help" adds nothing — state the task directly.</p></div>
+          <div class="habit"><b>Iterate, don't restart.</b><p>If it's not right, say "make it shorter" instead of rewriting your whole prompt.</p></div>
+        </div>
+      </section>
+
+      <!-- 2.4 -->
+      <section class="gs-block" id="gs-path">
+        <div class="step-eyebrow">04 · Do it now</div>
+        <h2>The 5-minute starter path</h2>
+        <p>Five steps. Do them in order, right now.</p>
+        <div class="path">
+          <div class="pstep">
+            <div class="n">1</div>
+            <h4>Open and confirm <span class="time">1 min</span></h4>
+            <p>Go to <span class="urlchip">m365.cloud.microsoft/chat</span>, sign in with your @berlitz.&#42; account, and check for the <b>green shield</b>. That shield is your "safe to use" signal.</p>
+          </div>
+          <div class="pstep">
+            <div class="n">2</div>
+            <h4>Tell Copilot who you are <span class="time">1 min</span></h4>
+            <p>Open <b>Settings → Personalization → Custom Instructions</b> and add one line — you only set this once:</p>
+            <div class="mini-prompt">I'm a [role] at Berlitz Japan. Use clear, simple language and bullet points for summaries.</div>
+          </div>
+          <div class="pstep">
+            <div class="n">3</div>
+            <h4>Run a real prompt <span class="time">2 min</span></h4>
+            <p>Paste a real email thread into the prompt window and ask:</p>
+            <div class="mini-prompt">Summarize this email thread in 3–5 bullet points. Highlight any action items, deadlines, and who is responsible for each.</div>
+          </div>
+          <div class="pstep">
+            <div class="n">4</div>
+            <h4>Iterate once <span class="time">1 min</span></h4>
+            <p>Don't accept the first draft. Reply in the same chat with one change:</p>
+            <div class="mini-prompt">Make it shorter, and add a one-line suggested reply.</div>
+          </div>
+          <div class="pstep final">
+            <div class="n">✓</div>
+            <h4>Keep going</h4>
+            <ul>
+              <li>Browse ready-made prompts in the <a data-goto-view="ph-prompts">Prompt Library</a></li>
+              <li>Find prompts for your role in <a data-goto-view="ph-learn">Learn &amp; Practice</a></li>
+              <li>Stuck? Ask your <a data-goto-view="ph-support">Focal Point</a></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLACEHOLDER VIEWS ============ -->
+<section class="view" id="view-ph-tools">
+  <div class="ph">
+    <div class="badge">⏳ Planned · Phase 1–3</div>
+    <h1>Tools &amp; Access</h1>
+    <p>The approved-tools hub: what to use, when, and how to do it safely. Content lands as the governance policy is finalized.</p>
+    <div class="ph-list">
+      <div class="ph-item"><span class="d"></span>Approved tools overview</div>
+      <div class="ph-item"><span class="d"></span>Which tool for what (decision guide)</div>
+      <div class="ph-item"><span class="d"></span>Security settings by tool</div>
+      <div class="ph-item"><span class="d"></span>Register a tool / request access</div>
+      <div class="ph-item"><span class="d"></span>Licensing</div>
+    </div>
+    <p class="ph-foot">This is a demo placeholder — page content is built in a later phase.</p>
+  </div>
+</section>
+
+<section class="view" id="view-ph-learn">
+  <div class="ph">
+    <div class="badge">⏳ Planned · Phase 4 (Sep 2026)</div>
+    <h1>Learn &amp; Practice</h1>
+    <p>Deeper skills and role-based guidance — where the GCSE deep-dive, task how-tos, and the Prompt Challenge will live.</p>
+    <div class="ph-list">
+      <div class="ph-item"><span class="d"></span>GCSE deep-dive</div>
+      <div class="ph-item"><span class="d"></span>Role-based guides</div>
+      <div class="ph-item"><span class="d"></span>Task how-tos (email, Excel, translation, meetings, materials)</div>
+      <div class="ph-item"><span class="d"></span>Walkthroughs</div>
+      <div class="ph-item"><span class="d"></span>Prompt Challenge hub</div>
+    </div>
+    <p class="ph-foot">This is a demo placeholder — page content is built in a later phase.</p>
+  </div>
+</section>
+
+<section class="view" id="view-ph-prompts">
+  <div class="ph">
+    <div class="badge">⏳ Planned · Lists</div>
+    <h1>Prompt Library &amp; Use Cases</h1>
+    <p>A living, filterable library of prompts and real Berlitz use cases — built as SharePoint Lists so it stays editable without republishing.</p>
+    <div class="ph-list">
+      <div class="ph-item"><span class="d"></span>Prompt Library</div>
+      <div class="ph-item"><span class="d"></span>Submit a prompt</div>
+      <div class="ph-item"><span class="d"></span>Use Case gallery</div>
+      <div class="ph-item"><span class="d"></span>Challenge winners</div>
+    </div>
+    <p class="ph-foot">This is a demo placeholder — page content is built in a later phase.</p>
+  </div>
+</section>
+
+<section class="view" id="view-ph-gov">
+  <div class="ph">
+    <div class="badge">⏳ Planned · Phase 3 (Jun 2026)</div>
+    <h1>Governance &amp; Safety</h1>
+    <p>The policy, the data-safety essentials, and the Berlitz terminology guard — APPI-aligned and written as guidance, not red tape.</p>
+    <div class="ph-list">
+      <div class="ph-item"><span class="d"></span>Governance Policy</div>
+      <div class="ph-item"><span class="d"></span>Data safety &amp; APPI essentials</div>
+      <div class="ph-item"><span class="d"></span>Do's &amp; Don'ts</div>
+      <div class="ph-item"><span class="d"></span>Terminology guard</div>
+      <div class="ph-item"><span class="d"></span>Exceptions &amp; approvals</div>
+    </div>
+    <p class="ph-foot">This is a demo placeholder — page content is built in a later phase.</p>
+  </div>
+</section>
+
+<section class="view" id="view-ph-support">
+  <div class="ph">
+    <div class="badge">⏳ Planned · Lists</div>
+    <h1>Support &amp; FAQ</h1>
+    <p>Where staff get unstuck — searchable FAQ and troubleshooting, plus the Focal Points directory and a direct line to BIS.</p>
+    <div class="ph-list">
+      <div class="ph-item"><span class="d"></span>FAQ</div>
+      <div class="ph-item"><span class="d"></span>Troubleshooting</div>
+      <div class="ph-item"><span class="d"></span>Focal Points directory</div>
+      <div class="ph-item"><span class="d"></span>Get help / contact BIS</div>
+      <div class="ph-item"><span class="d"></span>Feedback box</div>
+    </div>
+    <p class="ph-foot">This is a demo placeholder — page content is built in a later phase.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="fb"><span class="bmark">B</span> AI @ Berlitz Japan</div>
+    <span>AI Governance &amp; Strategy · BIS · Roadmap Item #20</span>
+    <span class="demo-flag">DEMO — STRUCTURE PREVIEW</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var navBtns = Array.prototype.slice.call(document.querySelectorAll('.navbtn'));
+  var views = {};
+  document.querySelectorAll('.view').forEach(function(v){ views[v.id.replace('view-','')] = v; });
+
+  function setView(name, scrollId){
+    if(!views[name]) name = 'home';
+    Object.keys(views).forEach(function(k){ views[k].classList.toggle('is-active', k===name); });
+    navBtns.forEach(function(b){ b.classList.toggle('is-active', b.getAttribute('data-view')===name); });
+    // close mobile menu
+    document.getElementById('topnav').classList.remove('is-open');
+    if(scrollId){
+      // wait a tick for view to render
+      requestAnimationFrame(function(){
+        var el = document.getElementById(scrollId);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        else window.scrollTo({top:0});
+      });
+    } else {
+      window.scrollTo(0,0);
+    }
+  }
+
+  // primary nav
+  navBtns.forEach(function(b){
+    b.addEventListener('click', function(){ setView(b.getAttribute('data-view')); });
+  });
+
+  // any element that switches view
+  document.querySelectorAll('[data-goto-view]').forEach(function(el){
+    el.style.cursor='pointer';
+    el.addEventListener('click', function(e){ e.preventDefault(); setView(el.getAttribute('data-goto-view')); });
+  });
+
+  // hero / news buttons that jump to get-started + a section
+  document.querySelectorAll('[data-goto]').forEach(function(el){
+    el.addEventListener('click', function(e){ e.preventDefault(); setView('get-started', el.getAttribute('data-goto')); });
+  });
+
+  // get-started side rail smooth scroll
+  document.querySelectorAll('.rail-link').forEach(function(link){
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      var id = link.getAttribute('data-scroll');
+      var el = document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+  // scroll-spy for rail
+  var blocks = ['gs-what','gs-access','gs-first','gs-path'];
+  var railLinks = {};
+  document.querySelectorAll('.rail-link').forEach(function(l){ railLinks[l.getAttribute('data-scroll')] = l; });
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          Object.values(railLinks).forEach(function(l){ l.classList.remove('is-active'); });
+          if(railLinks[en.target.id]) railLinks[en.target.id].classList.add('is-active');
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px', threshold:0});
+    blocks.forEach(function(id){ var el=document.getElementById(id); if(el) obs.observe(el); });
+  }
+
+  // mobile menu
+  document.getElementById('menuToggle').addEventListener('click', function(){
+    document.getElementById('topnav').classList.toggle('is-open');
+  });
+})();
+</script>
+</body>
+</html>
